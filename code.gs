@@ -62,18 +62,22 @@ const PASSWORD_SALT = 'SpiralDG::v1';
 // End constants section / Fin de la sección de constantes
 
 function doGet(e) {
-  var page = e && e.parameter.page ? e.parameter.page : 'landing';
-  if (page === 'login') {
-    return HtmlService.createHtmlOutputFromFile('login');
-  } else if (page === 'sidebar') {
-    return HtmlService.createHtmlOutputFromFile('sidebar');
+  var page = e && e.parameter.page ? e.parameter.page : "landing";
+  if (page === "login") {
+    return HtmlService.createHtmlOutputFromFile("login")
+      .setTitle("Login Page");
+  } else if (page === "sidebar") {
+    return HtmlService.createHtmlOutputFromFile("sidebar")
+      .setTitle("Sidebar Page");
   } else {
-    return HtmlService.createHtmlOutputFromFile('landing');
+    return HtmlService.createHtmlOutputFromFile("landing")
+      .setTitle("Landing Page");
   }
 }
 
-function testLogin() {
-  return HtmlService.createHtmlOutput("<h1 style='color:green'>Direct render works!</h1>");
+function testLoginDirect() {
+  return HtmlService.createHtmlOutputFromFile("login")
+    .setTitle("Direct Login Test");
 }
 // End web app entry point section / Fin de la sección del punto de entrada de la aplicación web
 
