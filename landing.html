@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spiral Development Group Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --primary: #007bff;
+        --surface: #ffffff;
+        --surface-alt: #f5f5f5;
+        --text: #1f1f1f;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Rajdhani', sans-serif;
+        background: radial-gradient(circle at top, rgba(0, 123, 255, 0.18), transparent 55%),
+          linear-gradient(160deg, #f5f7fb 0%, #ffffff 60%);
+        color: var(--text);
+        opacity: 0;
+        transition: opacity 0.6s ease;
+      }
+
+      body.loaded {
+        opacity: 1;
+      }
+
+      .landing-card {
+        width: min(420px, 90vw);
+        padding: 48px 36px;
+        border-radius: 28px;
+        background: var(--surface);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .landing-card::before {
+        content: '';
+        position: absolute;
+        inset: -120px 40% auto -60px;
+        height: 260px;
+        border-radius: 50%;
+        background: rgba(0, 123, 255, 0.08);
+        filter: blur(60px);
+        z-index: 0;
+      }
+
+      .landing-card > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      .logo {
+        width: 120px;
+        height: 120px;
+        padding: 16px;
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 18px 32px rgba(0, 123, 255, 0.12);
+        animation: floatIn 1s ease forwards;
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 28px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      p {
+        margin: 0;
+        font-size: 18px;
+        color: rgba(0, 0, 0, 0.6);
+      }
+
+      .continue-button {
+        border: none;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(0, 123, 255, 0.9), rgba(0, 123, 255, 0.75));
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 600;
+        padding: 14px 42px;
+        cursor: pointer;
+        box-shadow: 0 20px 32px rgba(0, 123, 255, 0.25);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.4s ease;
+      }
+
+      .continue-button:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 26px 48px rgba(0, 123, 255, 0.32);
+      }
+
+      .continue-button:focus {
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.25);
+      }
+
+      .fade-out {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      @keyframes floatIn {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="landing-card" id="landingCard">
+      <img class="logo" src="https://i.imgur.com/mRLfOoI.png" alt="Spiral Development Group" />
+      <h1>Welcome to Spiral Development Group Portal</h1>
+      <p>Your workspace for projects, collaboration, and time.</p>
+      <button class="continue-button" id="continueButton">Continue</button>
+    </main>
+    <script>
+      const appBaseUrl = (() => {
+        const segments = window.location.pathname.split('/');
+        const execIndex = segments.indexOf('exec');
+        if (execIndex === -1) {
+          return window.location.origin + window.location.pathname.replace(/\/$/, '');
+        }
+        return `${window.location.origin}${segments.slice(0, execIndex + 1).join('/')}`;
+      })();
+
+      function redirectTo(page) {
+        const target = page ? `${appBaseUrl}/${page}` : appBaseUrl;
+        window.location.href = target;
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.add('loaded');
+        const card = document.getElementById('landingCard');
+        document.getElementById('continueButton').addEventListener('click', () => {
+          card.classList.add('fade-out');
+          setTimeout(() => redirectTo('login'), 480);
+        });
+      });
+    </script>
+  </body>
+</html>
