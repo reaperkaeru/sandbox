@@ -71,12 +71,14 @@ function doGet(e) {
     return doGetServiceWorker();
   }
 
-  const path = e && e.pathInfo ? String(e.pathInfo).replace(/^\/+|\/+$/g, '') : '';
-  let file = 'landing';
-  if (path === 'login') {
+  const page = e && e.parameter && e.parameter.page ? e.parameter.page : 'landing';
+  let file;
+  if (page === 'login') {
     file = 'login';
-  } else if (path === 'sidebar') {
+  } else if (page === 'sidebar') {
     file = 'sidebar';
+  } else {
+    file = 'landing';
   }
 
   return HtmlService.createHtmlOutputFromFile(file)

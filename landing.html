@@ -132,7 +132,7 @@
       <img class="logo" src="https://i.imgur.com/mRLfOoI.png" alt="Spiral Development Group" />
       <h1>Welcome to Spiral Development Group Portal</h1>
       <p>Your workspace for projects, collaboration, and time.</p>
-      <button class="continue-button" id="continueButton">Continue</button>
+      <button class="continue-button" id="continueButton" onclick="startLoginTransition()">Continue</button>
     </main>
     <script>
       const appBaseUrl = (() => {
@@ -145,17 +145,20 @@
       })();
 
       function redirectTo(page) {
-        const target = page ? `${appBaseUrl}/${page}` : appBaseUrl;
+        const target = page ? `${appBaseUrl}?page=${encodeURIComponent(page)}` : appBaseUrl;
         window.location.href = target;
+      }
+
+      function startLoginTransition() {
+        const card = document.getElementById('landingCard');
+        if (card) {
+          card.classList.add('fade-out');
+        }
+        setTimeout(() => redirectTo('login'), 480);
       }
 
       document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('loaded');
-        const card = document.getElementById('landingCard');
-        document.getElementById('continueButton').addEventListener('click', () => {
-          card.classList.add('fade-out');
-          setTimeout(() => redirectTo('login'), 480);
-        });
       });
     </script>
   </body>
