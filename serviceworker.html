@@ -1,7 +1,8 @@
 const CACHE_NAME = 'spiraldg-cache-v1';
 const ASSETS_TO_CACHE = [
-  './sidebar.html',
-  './manifest.json',
+  '/',
+  '?action=manifest',
+  '?action=serviceworker',
   'https://i.imgur.com/mRLfOoI.png',
   'https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap',
   'https://fonts.googleapis.com/icon?family=Material+Icons+Outlined'
@@ -46,7 +47,7 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned));
           return response;
         })
-        .catch(() => caches.match('./sidebar.html'));
+        .catch(() => caches.match('/'));
     })
   );
 });

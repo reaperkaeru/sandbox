@@ -1365,10 +1365,6 @@
           }
         });
       }
-      function doGet(e) {
-  return HtmlService.createHtmlOutputFromFile("sidebar")
-    .setTitle("Spiral Development Group Portal");
-}
 
       // End language application section / Fin de la sección de aplicación de idioma
 
@@ -1422,30 +1418,33 @@
         if (!value) return '—';
         const date = new Date(value);
         if (isNaN(date)) return value;
-        return date.toLocaleDateString(currentLanguage === 'es' ? 'es-ES' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        return date.toLocaleDateString(
+          currentLanguage === 'es' ? 'es-ES' : 'en-US',
+          { year: 'numeric', month: 'short', day: 'numeric' }
+        );
       }
       // End date formatter section / Fin de la sección del formateador de fechas
 
       function formatTime(value) {
-  if (!value) return '—';
-  const date = new Date(value);
-  if (isNaN(date)) return value;
-  return date.toLocaleTimeString(
-    currentLanguage === 'es' ? 'es-ES' : 'en-US',
-    { hour: '2-digit', minute: '2-digit' }
-  );
-}
-// End time formatter section / Fin de la sección del formateador de horas
-</script>
+        if (!value) return '—';
+        const date = new Date(value);
+        if (isNaN(date)) return value;
+        return date.toLocaleTimeString(
+          currentLanguage === 'es' ? 'es-ES' : 'en-US',
+          { hour: '2-digit', minute: '2-digit' }
+        );
+      }
+      // End time formatter section / Fin de la sección del formateador de horas
+    </script>
 
-<script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker
-      .register("?action=serviceworker")
-      .then(reg => console.log("✅ Service Worker registered:", reg))
-      .catch(err => console.error("❌ Service Worker failed:", err));
-  }
-</script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+          .register('?action=serviceworker')
+          .then((reg) => console.log('✅ Service Worker registered:', reg))
+          .catch((err) => console.error('❌ Service Worker failed:', err));
+      }
+    </script>
 </body>
 </html>
 <!-- End sidebar.html file / Fin del archivo sidebar.html -->

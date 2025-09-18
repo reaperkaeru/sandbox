@@ -61,6 +61,20 @@ const SESSION_CACHE_SECONDS = 6 * 60 * 60;
 const PASSWORD_SALT = 'SpiralDG::v1';
 // End constants section / Fin de la sección de constantes
 
+function doGet(e) {
+  initializeEnvironment();
+  const action = e && e.parameter ? e.parameter.action : '';
+  if (action === 'manifest') {
+    return doGetManifest();
+  }
+  if (action === 'serviceworker') {
+    return doGetServiceWorker();
+  }
+  return HtmlService.createHtmlOutputFromFile('sidebar')
+    .setTitle('Spiral Development Group Portal');
+}
+// End web app entry point section / Fin de la sección del punto de entrada de la aplicación web
+
 function setupSheets() {
   const ss = SpreadsheetApp.getActive();
   ensureSheet(ss, SHEET_NAMES.users, USERS_HEADERS);
@@ -363,7 +377,11 @@ function deleteTask(taskId, token) {
   if (session.role === 'Staff' && String(assignedTo) !== String(session.id)) {
     throw new Error('Staff cannot delete this task / El personal no puede eliminar esta tarea');
   }
-  if (session.role === 'Manager' && String(assignedTo) !== String(session.id) && !toBoolean(sheet.getRange(rowIndex, 9).getValue())) {
+  if (
+    session.role === 'Manager' &&
+    String(assignedTo) !== String(session.id) &&
+    !toBoolean(sheet.getRange(rowIndex, 9).getValue())
+  ) {
     throw new Error('Managers can only delete communal tasks / Los gerentes solo pueden eliminar tareas comunales');
   }
   sheet.deleteRow(rowIndex);
@@ -503,6 +521,7 @@ function runDiagnostics(token) {
   if (token) {
     requireSession(token);
   }
+  initializeEnvironment();
   const results = [];
   const ss = SpreadsheetApp.getActive();
   const requiredSheets = [
@@ -719,16 +738,18 @@ function adminUserExists() {
   }
   return false;
 }
+// End admin verification section / Fin de la sección de verificación de administrador
+
 function doGetManifest() {
   return ContentService.createTextOutput(
-    HtmlService.createHtmlOutputFromFile("manifest").getContent()
+    HtmlService.createHtmlOutputFromFile('manifest').getContent()
   ).setMimeType(ContentService.MimeType.JSON);
 }
+// End manifest handler section / Fin de la sección del manejador del manifiesto
 
 function doGetServiceWorker() {
   return ContentService.createTextOutput(
-    HtmlService.createHtmlOutputFromFile("serviceworker").getContent()
+    HtmlService.createHtmlOutputFromFile('serviceworker').getContent()
   ).setMimeType(ContentService.MimeType.JAVASCRIPT);
 }
-
-// End admin verification section / Fin de la sección de verificación de administrador
+// End service worker handler section / Fin de la sección del manejador del service worker
