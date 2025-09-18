@@ -63,7 +63,8 @@ const PASSWORD_SALT = 'SpiralDG::v1';
 
 function doGet(e) {
   initializeEnvironment();
-  const action = e && e.parameter ? e.parameter.action : '';
+
+  var action = e && e.parameter && e.parameter.action ? e.parameter.action : '';
   if (action === 'manifest') {
     return doGetManifest();
   }
@@ -71,18 +72,15 @@ function doGet(e) {
     return doGetServiceWorker();
   }
 
-  const page = e && e.parameter && e.parameter.page ? e.parameter.page : 'landing';
-  let file;
-  if (page === 'login') {
-    file = 'login';
-  } else if (page === 'sidebar') {
-    file = 'sidebar';
-  } else {
-    file = 'landing';
+  var page = e && e.parameter && e.parameter.page ? e.parameter.page : 'landing';
+  switch (page) {
+    case 'login':
+      return HtmlService.createHtmlOutputFromFile('login');
+    case 'sidebar':
+      return HtmlService.createHtmlOutputFromFile('sidebar');
+    default:
+      return HtmlService.createHtmlOutputFromFile('landing');
   }
-
-  return HtmlService.createHtmlOutputFromFile(file)
-    .setTitle('Spiral Development Group Portal');
 }
 // End web app entry point section / Fin de la sección del punto de entrada de la aplicación web
 

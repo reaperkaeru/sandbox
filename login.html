@@ -3,284 +3,106 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Log In</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+    <title>Login Debug</title>
     <style>
-      :root {
-        --primary: #4f46ef;
-        --primary-accent: #8575ff;
-        --card-bg: rgba(255, 255, 255, 0.92);
-        --text: #1f2937;
-        --muted: #6b7280;
-      }
-
       * {
         box-sizing: border-box;
       }
 
       body {
         margin: 0;
-        min-height: 100vh;
+        padding: 48px 16px;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f6fb;
+        color: #1f2933;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: center;
-        font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        background: radial-gradient(circle at top left, rgba(79, 70, 239, 0.18), transparent 55%),
-          radial-gradient(circle at bottom right, rgba(133, 117, 255, 0.22), transparent 60%), #eef2ff;
-        color: var(--text);
-        overflow: auto;
       }
 
-      .page-wrapper {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 32px 16px;
-      }
-
-      .page-heading {
-        margin: 0 0 24px 0;
-        text-align: center;
-        font-size: 2rem;
-        font-weight: 600;
-      }
-
-      .login-card {
-        width: min(420px, 92vw);
-        background: var(--card-bg);
-        border-radius: 28px;
-        padding: 40px 36px;
-        box-shadow: 0 30px 60px rgba(79, 70, 239, 0.18);
-        display: flex;
-        flex-direction: column;
-        gap: 28px;
-        align-items: stretch;
-        backdrop-filter: blur(6px);
-        opacity: 1;
-        transform: none;
-      }
-
-      .login-card.fade-out {
-        opacity: 0;
-        transform: translateY(-20px) scale(0.98);
-        pointer-events: none;
-      }
-
-      .logo-wrapper {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(79, 70, 239, 0.08);
-        border-radius: 20px;
-        padding: 18px;
-      }
-
-      .logo-wrapper img {
-        width: 88px;
-        height: 88px;
-        object-fit: contain;
-        filter: drop-shadow(0 18px 24px rgba(79, 70, 239, 0.28));
+      main {
+        width: min(480px, 100%);
+        background: #ffffff;
+        border: 2px solid #4f46ef;
+        border-radius: 12px;
+        padding: 32px 28px;
+        box-shadow: 0 12px 24px rgba(79, 70, 239, 0.15);
       }
 
       h1 {
-        margin: 0;
+        margin-top: 0;
+        font-size: 2rem;
         text-align: center;
-        font-size: 1.9rem;
-        font-weight: 600;
-        letter-spacing: 0.03em;
+        color: #4f46ef;
       }
 
-      p.subtitle {
-        margin: 0;
+      p {
+        font-size: 1rem;
         text-align: center;
-        font-size: 0.95rem;
-        color: var(--muted);
+        margin-bottom: 24px;
       }
 
       form {
         display: grid;
-        gap: 18px;
+        gap: 16px;
       }
 
-      label {
-        display: block;
-        font-size: 0.95rem;
-        font-weight: 500;
-        margin-bottom: 6px;
+      input,
+      button {
+        font-size: 1rem;
+        padding: 12px 14px;
       }
 
       input {
-        width: 100%;
-        padding: 14px 16px;
-        border-radius: 14px;
-        border: 1px solid rgba(79, 70, 239, 0.22);
-        background: rgba(255, 255, 255, 0.9);
-        font-family: inherit;
-        font-size: 1rem;
-        transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-      }
-
-      input:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(79, 70, 239, 0.18);
-        transform: translateY(-1px);
+        border: 1px solid #c7c9d9;
+        border-radius: 8px;
       }
 
       button {
-        border: none;
-        border-radius: 16px;
-        padding: 14px 18px;
-        font-size: 1.05rem;
-        font-weight: 600;
+        background: #4f46ef;
         color: #ffffff;
-        background: linear-gradient(135deg, var(--primary), var(--primary-accent));
+        border: none;
+        border-radius: 8px;
         cursor: pointer;
-        box-shadow: 0 18px 36px rgba(79, 70, 239, 0.3);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
       }
 
       button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 26px 40px rgba(79, 70, 239, 0.28);
+        background: #352ee6;
       }
 
-      button:active {
-        transform: translateY(0);
-        box-shadow: 0 18px 30px rgba(79, 70, 239, 0.28);
-      }
-
-      #debug {
+      #debug-log {
         margin-top: 24px;
-        font-family: monospace;
+        padding: 16px;
+        border-radius: 8px;
+        background: #f2f3ff;
+        border: 1px solid #c7c9d9;
+        min-height: 60px;
         white-space: pre-wrap;
-        text-align: center;
       }
-
-      /*
-      #logo-screen {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: radial-gradient(circle at center, rgba(79, 70, 239, 0.18), transparent 60%), #eef2ff;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        gap: 20px;
-        opacity: 0;
-        transform: scale(0.96);
-        transition: opacity 0.7s ease, transform 0.7s ease;
-      }
-
-      #logo-screen.show {
-        opacity: 1;
-        transform: scale(1);
-      }
-
-      #logo-screen img {
-        width: 140px;
-        height: 140px;
-        object-fit: contain;
-        opacity: 0;
-        transform: translateY(24px);
-        transition: opacity 0.8s ease, transform 0.8s ease;
-      }
-
-      #logo-screen.show img {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      #welcome-text {
-        font-size: 1.6rem;
-        font-weight: 500;
-        color: var(--text);
-        opacity: 0;
-        transform: translateY(12px);
-        transition: opacity 0.6s ease, transform 0.6s ease;
-      }
-
-      #welcome-text.show {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      */
     </style>
   </head>
   <body>
-    <div class="page-wrapper">
-      <h2 class="page-heading">Login Page Test</h2>
-      <div id="login-card" class="login-card">
-        <div class="logo-wrapper">
-          <img src="https://i.imgur.com/mRLfOoI.png" alt="App logo" />
-        </div>
-        <div>
-          <h1>Welcome Back</h1>
-          <p class="subtitle">Sign in to continue to your workspace</p>
-        </div>
-        <form id="login-form">
-          <div>
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" placeholder="Enter your username" autocomplete="username" />
-          </div>
-          <div>
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" />
-          </div>
-          <button type="submit">Log In</button>
-        </form>
-      </div>
-    </div>
-    <!--
-    <div id="logo-screen">
-      <img src="https://i.imgur.com/mRLfOoI.png" alt="App logo" />
-      <div id="welcome-text">Welcome</div>
-    </div>
-    -->
-    <div id="debug"></div>
+    <main>
+      <h1>Login Page Debug</h1>
+      <p>If you see this, login.html is loading.</p>
+      <form>
+        <input type="text" placeholder="Username" />
+        <input type="password" placeholder="Password" />
+        <button type="button" onclick="alert('Login clicked')">Login</button>
+      </form>
+      <div id="debug-log"></div>
+    </main>
     <script>
-      const debugEl = document.getElementById('debug');
-
-      function appendDebug(message) {
-        if (debugEl) {
-          debugEl.innerText += message + '\n';
+      (function () {
+        var debugLog = document.getElementById('debug-log');
+        if (debugLog) {
+          debugLog.textContent = 'Debug log ready.';
         }
-      }
+      })();
 
-      appendDebug('Page loaded');
-
-      document.getElementById('login-form').addEventListener('submit', function (event) {
-        event.preventDefault();
-        login();
-      });
-
-      function login() {
-        appendDebug('Login clicked');
-        // const username = document.getElementById('username').value.trim();
-        // Original animation logic temporarily disabled for debugging purposes.
-        // document.getElementById('login-card').classList.add('fade-out');
-        // setTimeout(() => {
-        //   const logoScreen = document.getElementById('logo-screen');
-        //   const welcomeText = document.getElementById('welcome-text');
-        //   logoScreen.style.display = 'flex';
-        //   welcomeText.innerText = 'Welcome ' + username;
-        //   requestAnimationFrame(() => {
-        //     logoScreen.classList.add('show');
-        //   });
-        //   setTimeout(() => {
-        //     welcomeText.classList.add('show');
-        //   }, 1000);
-        //   setTimeout(() => {
-        //     window.location.href = '?page=sidebar';
-        //   }, 2000);
-        // }, 1000);
-        console.log('Redirecting to sidebar');
-        appendDebug('Redirecting to sidebar');
-      }
+      window.onerror = function (msg, src, line, col, err) {
+        document.body.innerHTML += "<pre style='color:red'>Error: " + msg + '</pre>';
+      };
     </script>
   </body>
 </html>
