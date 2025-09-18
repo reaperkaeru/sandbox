@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign in · Spiral Development Group</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --primary: #007bff;
+        --surface: rgba(255, 255, 255, 0.92);
+        --text: #1f1f1f;
+        --muted: rgba(0, 0, 0, 0.55);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Rajdhani', sans-serif;
+        background: linear-gradient(160deg, rgba(0, 123, 255, 0.16), transparent 50%),
+          radial-gradient(circle at bottom right, rgba(0, 123, 255, 0.18), transparent 55%),
+          #f4f6fb;
+        color: var(--text);
+        opacity: 0;
+        transition: opacity 0.6s ease;
+      }
+
+      body.loaded {
+        opacity: 1;
+      }
+
+      .auth-shell {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .logo {
+        width: 120px;
+        height: 120px;
+        padding: 16px;
+        border-radius: 32px;
+        background: var(--surface);
+        box-shadow: 0 22px 36px rgba(0, 123, 255, 0.18);
+        opacity: 0;
+        transform: translateY(24px);
+        animation: logoEnter 1s ease forwards;
+      }
+
+      .login-card {
+        width: min(420px, 88vw);
+        background: var(--surface);
+        border-radius: 28px;
+        padding: 40px 36px;
+        box-shadow: 0 24px 40px rgba(0, 0, 0, 0.12);
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        transition: opacity 0.4s ease, transform 0.4s ease;
+      }
+
+      .login-card.fade-out {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 26px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        text-align: center;
+      }
+
+      form {
+        display: grid;
+        gap: 16px;
+      }
+
+      label {
+        font-weight: 600;
+        font-size: 15px;
+      }
+
+      input {
+        width: 100%;
+        padding: 14px 16px;
+        border-radius: 14px;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        background: rgba(255, 255, 255, 0.85);
+        font-family: inherit;
+        font-size: 16px;
+        transition: border 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.15);
+      }
+
+      button {
+        border: none;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(0, 123, 255, 0.9), rgba(0, 123, 255, 0.75));
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 18px;
+        padding: 14px;
+        cursor: pointer;
+        box-shadow: 0 20px 36px rgba(0, 123, 255, 0.25);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.4s ease;
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: wait;
+        box-shadow: none;
+      }
+
+      button:hover:not(:disabled) {
+        transform: translateY(-3px);
+        box-shadow: 0 26px 44px rgba(0, 123, 255, 0.28);
+      }
+
+      .error {
+        min-height: 20px;
+        color: #d64545;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      #welcomeMessage {
+        opacity: 0;
+        transform: translateY(12px);
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--text);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+      }
+
+      #welcomeMessage.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .logo.fade-up {
+        animation: logoHighlight 1.2s ease forwards;
+      }
+
+      .logo.hide {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+
+      @keyframes logoEnter {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes logoHighlight {
+        0% {
+          transform: scale(1);
+          box-shadow: 0 22px 36px rgba(0, 123, 255, 0.18);
+        }
+        50% {
+          transform: scale(1.08);
+          box-shadow: 0 32px 48px rgba(0, 123, 255, 0.25);
+        }
+        100% {
+          transform: scale(1);
+          box-shadow: 0 22px 36px rgba(0, 123, 255, 0.18);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-shell">
+      <img src="https://i.imgur.com/mRLfOoI.png" alt="Spiral Development Group" class="logo" id="appLogo" />
+      <section class="login-card" id="loginCard">
+        <h1>Secure Workspace Access</h1>
+        <form id="loginForm">
+          <div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="username" required />
+          </div>
+          <div>
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" placeholder="Enter password" autocomplete="current-password" required />
+          </div>
+          <button type="submit" id="loginButton">Sign in</button>
+          <div class="error" id="errorMessage"></div>
+        </form>
+      </section>
+      <div id="welcomeMessage"></div>
+    </div>
+    <script>
+      const TOKEN_KEY = 'spiralToken';
+      const USER_KEY = 'spiralUser';
+      const appBaseUrl = (() => {
+        const segments = window.location.pathname.split('/');
+        const execIndex = segments.indexOf('exec');
+        if (execIndex === -1) {
+          return window.location.origin + window.location.pathname.replace(/\/$/, '');
+        }
+        return `${window.location.origin}${segments.slice(0, execIndex + 1).join('/')}`;
+      })();
+
+      function redirectTo(page) {
+        const target = page ? `${appBaseUrl}/${page}` : appBaseUrl;
+        window.location.href = target;
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.add('loaded');
+        const storedToken = sessionStorage.getItem(TOKEN_KEY);
+        if (storedToken) {
+          redirectTo('sidebar');
+          return;
+        }
+        const form = document.getElementById('loginForm');
+        const logo = document.getElementById('appLogo');
+        const card = document.getElementById('loginCard');
+        const message = document.getElementById('welcomeMessage');
+        const submitButton = document.getElementById('loginButton');
+        const errorMessage = document.getElementById('errorMessage');
+
+        form.addEventListener('submit', (event) => {
+          event.preventDefault();
+          errorMessage.textContent = '';
+          submitButton.disabled = true;
+          logo.classList.remove('hide');
+          google.script.run
+            .withSuccessHandler((res) => {
+              if (!res || !res.success) {
+                submitButton.disabled = false;
+                errorMessage.textContent = 'Unable to sign in. Please try again.';
+                return;
+              }
+              sessionStorage.setItem(TOKEN_KEY, res.token);
+              sessionStorage.setItem(USER_KEY, JSON.stringify(res.user));
+              card.classList.add('fade-out');
+              logo.classList.add('fade-up');
+              setTimeout(() => {
+                logo.classList.add('hide');
+                message.textContent = `Welcome ${res.user.name}`;
+                message.classList.add('show');
+              }, 500);
+              setTimeout(() => {
+                redirectTo('sidebar');
+              }, 1400);
+            })
+            .withFailureHandler((error) => {
+              submitButton.disabled = false;
+              errorMessage.textContent = error && error.message ? error.message : 'Unable to sign in. Please try again.';
+            })
+            .login(form.email.value.trim(), form.password.value);
+        });
+      });
+    </script>
+  </body>
+</html>

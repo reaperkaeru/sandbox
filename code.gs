@@ -70,7 +70,16 @@ function doGet(e) {
   if (action === 'serviceworker') {
     return doGetServiceWorker();
   }
-  return HtmlService.createHtmlOutputFromFile('sidebar')
+
+  const path = e && e.pathInfo ? String(e.pathInfo).replace(/^\/+|\/+$/g, '') : '';
+  let file = 'landing';
+  if (path === 'login') {
+    file = 'login';
+  } else if (path === 'sidebar') {
+    file = 'sidebar';
+  }
+
+  return HtmlService.createHtmlOutputFromFile(file)
     .setTitle('Spiral Development Group Portal');
 }
 // End web app entry point section / Fin de la sección del punto de entrada de la aplicación web
@@ -271,11 +280,23 @@ function createTask(task, token) {
   const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_NAMES.tasks);
   const now = new Date();
   const taskId = task.id || Utilities.getUuid();
-  const assignee = task.assignedTo || session.id;
-  if (session.role === 'Staff' && assignee !== session.id) {
-    throw new Error('Staff can only assign to self / El personal solo puede asignarse a sí mismo');
+  const isCommunal = toBoolean(task.isCommunal);
+  const requestedAssignee = String(task.assignedTo || '').trim();
+  let assignee = '';
+
+  if (!isCommunal) {
+    if (session.role === 'Admin') {
+      assignee = requestedAssignee || session.email;
+    } else {
+      const sessionEmail = String(session.email || '').toLowerCase();
+      const normalizedRequested = requestedAssignee.toLowerCase();
+      if (requestedAssignee && normalizedRequested !== sessionEmail) {
+        throw new Error('Only administrators can assign to others / Solo los administradores pueden asignar a otros');
+      }
+      assignee = session.email;
+    }
   }
-  const isCommunal = task.isCommunal === true || String(task.isCommunal).toLowerCase() === 'true';
+
   sheet.appendRow([
     taskId,
     task.projectId || '',
@@ -298,12 +319,15 @@ function getTasks(token) {
   const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_NAMES.tasks);
   const rows = sheet.getDataRange().getValues();
   const tasks = [];
+  const sessionIdentifiers = [String(session.email || '').toLowerCase(), String(session.id || '').toLowerCase()];
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i];
     if (!row[0]) continue;
     const isCommunal = toBoolean(row[8]);
     const assignedTo = row[4];
-    const canView = isCommunal || session.role === 'Admin' || String(assignedTo) === String(session.id);
+    const normalizedAssignee = String(assignedTo || '').toLowerCase();
+    const matchesUser = normalizedAssignee && sessionIdentifiers.indexOf(normalizedAssignee) !== -1;
+    const canView = isCommunal || session.role === 'Admin' || matchesUser;
     if (!canView) continue;
     tasks.push({
       id: row[0],
@@ -341,10 +365,22 @@ function updateTask(task, token) {
   if (rowIndex === -1) {
     throw new Error('Task not found / Tarea no encontrada');
   }
-  const assignedTo = task.assignedTo || sheet.getRange(rowIndex, 5).getValue();
-  if (session.role === 'Staff' && String(assignedTo) !== String(session.id)) {
-    throw new Error('Staff cannot reassign others / El personal no puede reasignar a otros');
+
+  const existingAssignee = sheet.getRange(rowIndex, 5).getValue();
+  const existingIsCommunal = toBoolean(sheet.getRange(rowIndex, 9).getValue());
+  const desiredCommunal = task.isCommunal === undefined ? existingIsCommunal : toBoolean(task.isCommunal);
+  let nextAssignee = desiredCommunal ? '' : String(task.assignedTo !== undefined ? task.assignedTo : existingAssignee).trim();
+
+  if (!desiredCommunal && !nextAssignee) {
+    nextAssignee = existingAssignee || session.email;
   }
+
+  const normalizedNext = String(nextAssignee || '').toLowerCase();
+  const sessionIdentifiers = [String(session.email || '').toLowerCase(), String(session.id || '').toLowerCase()];
+  if (session.role !== 'Admin' && normalizedNext && sessionIdentifiers.indexOf(normalizedNext) === -1) {
+    throw new Error('Insufficient permissions to reassign / Permisos insuficientes para reasignar');
+  }
+
   const now = new Date();
   const createdAt = sheet.getRange(rowIndex, 10).getValue();
   sheet.getRange(rowIndex, 1, 1, TASK_HEADERS.length).setValues([
@@ -353,11 +389,11 @@ function updateTask(task, token) {
       task.projectId || sheet.getRange(rowIndex, 2).getValue(),
       task.name || sheet.getRange(rowIndex, 3).getValue(),
       task.description || sheet.getRange(rowIndex, 4).getValue(),
-      assignedTo,
+      desiredCommunal ? '' : nextAssignee,
       task.status || sheet.getRange(rowIndex, 6).getValue(),
       task.priority || sheet.getRange(rowIndex, 7).getValue(),
       task.dueDate ? new Date(task.dueDate) : sheet.getRange(rowIndex, 8).getValue(),
-      task.isCommunal === undefined ? toBoolean(sheet.getRange(rowIndex, 9).getValue()) : toBoolean(task.isCommunal),
+      desiredCommunal,
       createdAt,
       now
     ]
@@ -374,12 +410,15 @@ function deleteTask(taskId, token) {
     throw new Error('Task not found / Tarea no encontrada');
   }
   const assignedTo = sheet.getRange(rowIndex, 5).getValue();
-  if (session.role === 'Staff' && String(assignedTo) !== String(session.id)) {
+  const normalizedAssigned = String(assignedTo || '').toLowerCase();
+  const sessionIdentifiers = [String(session.email || '').toLowerCase(), String(session.id || '').toLowerCase()];
+  if (session.role === 'Staff' && normalizedAssigned && sessionIdentifiers.indexOf(normalizedAssigned) === -1) {
     throw new Error('Staff cannot delete this task / El personal no puede eliminar esta tarea');
   }
   if (
     session.role === 'Manager' &&
-    String(assignedTo) !== String(session.id) &&
+    normalizedAssigned &&
+    sessionIdentifiers.indexOf(normalizedAssigned) === -1 &&
     !toBoolean(sheet.getRange(rowIndex, 9).getValue())
   ) {
     throw new Error('Managers can only delete communal tasks / Los gerentes solo pueden eliminar tareas comunales');
@@ -580,7 +619,9 @@ function getTaskById(taskId, session) {
     createdAt: row[9] instanceof Date ? row[9].toISOString() : row[9],
     updatedAt: row[10] instanceof Date ? row[10].toISOString() : row[10]
   };
-  if (task.isCommunal || session.role === 'Admin' || String(task.assignedTo) === String(session.id)) {
+  const normalizedAssigned = String(task.assignedTo || '').toLowerCase();
+  const sessionIdentifiers = [String(session.email || '').toLowerCase(), String(session.id || '').toLowerCase()];
+  if (task.isCommunal || session.role === 'Admin' || (normalizedAssigned && sessionIdentifiers.indexOf(normalizedAssigned) !== -1)) {
     return task;
   }
   return null;
